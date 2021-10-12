@@ -14,8 +14,11 @@
 toAuthorlist <- function(source.csv = "authorlist.csv",
                          target = "authorlist.docx",
                          type="numbered"){
-  authorlist <- read.csv(source.csv)
-  authorlist %<>% as_tibble()
+  library(tidyverse)
+  library(magrittr)
+  library(officer)
+  authorlist_ <- read.csv(source.csv)
+  authorlist_ <- as_tibble(authorlist_)
   df_authorlist <- authorlist %>%
     # gather all affiliations in one column
     gather(key = "key", value = "Affiliation", -Coauthor_Order, -`Coauthor_Name`) %>%
@@ -26,12 +29,12 @@ toAuthorlist <- function(source.csv = "authorlist.csv",
   df_Affiliation_order <- df_authorlist %>%
     select(Affiliation) %>%
     distinct()
-  df_Affiliation_order %<>%
+  df_Affiliation_order <- df_Affiliation_order %>%
     mutate(Affiliation_Order = 1:nrow(df_Affiliation_order))
   if(type == "numbered"){
-    df_authorlist %<>% left_join(df_Affiliation_order)
+    df_authorlist <- df_authorlist %>% left_join(df_Affiliation_order)
 
-    df_authorlist %<>%
+    df_authorlist <- df_authorlist %>%
       arrange(Coauthor_Order, Affiliation_Order) %>%
       group_by(Coauthor_Name, Coauthor_Order) %>%
       nest() %>%
@@ -42,8 +45,8 @@ toAuthorlist <- function(source.csv = "authorlist.csv",
                                       function(dat) paste0(dat, collapse = ","))) %>%
       select(-data)
 
-    df_Affiliation_order %<>% arrange(Affiliation_Order)
-    df_authorlist %<>% arrange(Coauthor_Order)
+    df_Affiliation_order <- df_Affiliation_order %>% arrange(Affiliation_Order)
+    df_authorlist <- df_authorlist %>% arrange(Coauthor_Order)
 
     properties1 <- fp_text(font.size=11, font.family = "Calibri")
     properties2 <- fp_text(font.size=11, font.family = "Calibri", vertical.align = "superscript")
@@ -82,9 +85,9 @@ toAuthorlist <- function(source.csv = "authorlist.csv",
         return(output)
       }))
 
-    df_authorlist %<>% left_join(df_Affiliation_order)
+    df_authorlist <- df_authorlist %>% left_join(df_Affiliation_order)
 
-    df_authorlist %<>%
+    df_authorlist <- df_authorlist %>%
       arrange(Coauthor_Order, Affiliation_Order) %>%
       group_by(Coauthor_Name, Coauthor_Order) %>%
       nest() %>%
@@ -95,8 +98,8 @@ toAuthorlist <- function(source.csv = "authorlist.csv",
                                       function(dat) paste0(dat, collapse = ","))) %>%
       select(-data)
 
-    df_Affiliation_order %<>% arrange(Affiliation_Order)
-    df_authorlist %<>% arrange(Coauthor_Order)
+    df_Affiliation_order <- df_Affiliation_order %>% arrange(Affiliation_Order)
+    df_authorlist <- df_authorlist %>% arrange(Coauthor_Order)
 
     properties1 <- fp_text(font.size=11, font.family = "Calibri")
     properties2 <- fp_text(font.size=11, font.family = "Calibri", vertical.align = "superscript")

@@ -17,9 +17,10 @@ affiliations together in a CSV file is easy. The package “authorlist”
 automatically produces a Word document with the formatted author and
 affiliation list ready for submission from a CSV file. The template of
 the CSV file, which includes the coauthors’ names, affiliations, and
-their order in the author list, is provided by the R package. The
-leading author of the manuscript could make it even easier by sharing
-the CSV template through Dropbox or Google Drive and asking the
+their order in the author list, can be downloaded from
+<https://figshare.com/articles/dataset/CSV_template_for_R_package_authorlist_/16794901>.
+The leading author of the manuscript could make it even easier by
+sharing the CSV template through Dropbox or Google Drive and asking the
 coauthors to fill in their information.
 
 ## Installation
@@ -36,15 +37,16 @@ devtools::install_github("qiang-yang-ecology/authorlist")
 
 This is a basic example which shows you how to solve a common problem:
 
+-   step 1: download the template from the following link to your
+    computer:
+    <https://figshare.com/articles/dataset/CSV_template_for_R_package_authorlist_/16794901>
+
+-   step2: modify the csv file to include the coauthor information of
+    your manuscript.
+
+-   step3: produced the formatted author and affiliation list
+
 ``` r
-# step 1: download the template to your computer
-library(authorlist)
-getTemplate(destfile = "~/Downloads/authorlist.template.csv")
-# change the destfile path if necessary
-
-# step2: modify the csv file to include the coauthor information of your manuscript.
-
-# step3: produced the formatted author and affiliation list 
 toAuthorlist(source.csv = "~/Downloads/authorlist.csv",
              target = "~/Downloads/authorlist.docx",
              type="numbered")
