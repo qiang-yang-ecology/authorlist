@@ -35,7 +35,8 @@ devtools::install_github("qiang-yang-ecology/authorlist")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+This is a basic example which shows you how to produce the Word document
+with formatted author and affiliation list:
 
 -   step 1: download the template from the following link to your
     computer:
@@ -47,7 +48,11 @@ This is a basic example which shows you how to solve a common problem:
 -   step3: produced the formatted author and affiliation list
 
 ``` r
+library(toAuthorlist)
 toAuthorlist(source.csv = "~/Downloads/authorlist.csv",
+             # the csv including the author names and affiliations
              target = "~/Downloads/authorlist.docx",
-             type="numbered")
+             # where you save the produced word document
+             type="numbered"
+             # type of numbering the affiliations, could be numbered (numbers) or alphabeta (letters)
 ```

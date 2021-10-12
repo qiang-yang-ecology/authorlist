@@ -14,12 +14,9 @@
 toAuthorlist <- function(source.csv = "authorlist.csv",
                          target = "authorlist.docx",
                          type="numbered"){
-  library(tidyverse)
-  library(magrittr)
-  library(officer)
   authorlist_ <- read.csv(source.csv)
   authorlist_ <- as_tibble(authorlist_)
-  df_authorlist <- authorlist %>%
+  df_authorlist <- authorlist_ %>%
     # gather all affiliations in one column
     gather(key = "key", value = "Affiliation", -Coauthor_Order, -`Coauthor_Name`) %>%
     # remove rows with no Affiliations
