@@ -1,0 +1,22 @@
+Package: authorlist
+Title: To Creat the Formatted Author List for Manuscripts with Many Authors
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Qiang",
+           family = "Yang",
+           role = c("aut", "cre"),
+           email = "qiang.yang@uni-konstanz.de",
+           comment = c(ORCID = "https://orcid.org/0000-0003-4210-9007"))
+Description: Formatting the author list and the affiliation list in Word for the manuscript with many coauthors is painful and time-consuming. However, putting the author names and affiliations together in a CSV file is easy. The package "authorlist" automatically produces a Word document with the formatted author and affiliation list ready for submission from a CSV file. The template of the CSV file, which includes the coauthors' names, affiliations, and their order in the author list, is provided by the R package. The leading author of the manuscript could make it even easier by sharing the CSV template through Dropbox or Google Drive and asking the coauthors to fill in their information. 
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Imports:
+    tidyverse,
+    magrittr,
+    officer
