@@ -15,115 +15,115 @@ toAuthorlist <- function(source.csv = "authorlist.csv",
                          target = "authorlist.docx",
                          type="numbered"){
   authorlist_ <- read.csv(source.csv)
-  authorlist_ <- as_tibble(authorlist_)
+  authorlist_ <- tibble::as_tibble(authorlist_)
   df_authorlist <- authorlist_ %>%
     # gather all affiliations in one column
-    gather(key = "key", value = "Affiliation", -Coauthor_Order, -`Coauthor_Name`) %>%
+    tidyr::gather(key = "key", value = "Affiliation", -Coauthor_Order, -`Coauthor_Name`) %>%
     # remove rows with no Affiliations
-    filter(!is.na(Affiliation)) %>%
-    filter(Affiliation != "") %>%
-    arrange(Coauthor_Order, key)
+    dplyr::filter(!is.na(Affiliation)) %>%
+    dplyr::filter(Affiliation != "") %>%
+    dplyr::arrange(Coauthor_Order, key)
   df_Affiliation_order <- df_authorlist %>%
-    select(Affiliation) %>%
-    distinct()
+    dplyr::select(Affiliation) %>%
+    dplyr::distinct()
   df_Affiliation_order <- df_Affiliation_order %>%
-    mutate(Affiliation_Order = 1:nrow(df_Affiliation_order))
+    dplyr::mutate(Affiliation_Order = 1:nrow(df_Affiliation_order))
   if(type == "numbered"){
-    df_authorlist <- df_authorlist %>% left_join(df_Affiliation_order)
+    df_authorlist <- df_authorlist %>% dplyr::left_join(df_Affiliation_order)
 
     df_authorlist <- df_authorlist %>%
-      arrange(Coauthor_Order, Affiliation_Order) %>%
-      group_by(Coauthor_Name, Coauthor_Order) %>%
-      nest() %>%
-      mutate(data = map(data,
-                        function(dat) dat %>% pull(Affiliation_Order))) %>%
+      dplyr::arrange(Coauthor_Order, Affiliation_Order) %>%
+      dplyr::group_by(Coauthor_Name, Coauthor_Order) %>%
+      tidyr::nest() %>%
+      dplyr::mutate(data = map(data,
+                        function(dat) dat %>% dplyr::pull(Affiliation_Order))) %>%
       mutate(
-        Affiliation_numbers = map_chr(data,
+        Affiliation_numbers = purrr::map_chr(data,
                                       function(dat) paste0(dat, collapse = ","))) %>%
       select(-data)
 
-    df_Affiliation_order <- df_Affiliation_order %>% arrange(Affiliation_Order)
-    df_authorlist <- df_authorlist %>% arrange(Coauthor_Order)
+    df_Affiliation_order <- df_Affiliation_order %>% dplyr::arrange(Affiliation_Order)
+    df_authorlist <- df_authorlist %>% dplyr::arrange(Coauthor_Order)
 
-    properties1 <- fp_text(font.size=11, font.family = "Calibri")
-    properties2 <- fp_text(font.size=11, font.family = "Calibri", vertical.align = "superscript")
+    properties1 <- officer::fp_text(font.size=11, font.family = "Calibri")
+    properties2 <- officer::fp_text(font.size=11, font.family = "Calibri", vertical.align = "superscript")
 
     authorlist <- list()
-    n_author <- n_distinct(df_authorlist$Coauthor_Name)
+    n_author <- dplyr::n_distinct(df_authorlist$Coauthor_Name)
     for(i in 1:n_author){
-      authorlist[[i*3-2]] <- ftext(df_authorlist$Coauthor_Name[[i]], properties1)
-      authorlist[[i*3-1]] <- ftext(df_authorlist$Affiliation_numbers[[i]], properties2)
-      authorlist[[i*3]] <- ftext(", ", properties1)
+      authorlist[[i*3-2]] <- officer::ftext(df_authorlist$Coauthor_Name[[i]], properties1)
+      authorlist[[i*3-1]] <- officer::ftext(df_authorlist$Affiliation_numbers[[i]], properties2)
+      authorlist[[i*3]] <- officer::ftext(", ", properties1)
     }
     authorlist[[n_author*3]] <- ""
-    authorlist.paragraph <- fpar(values = authorlist)
+    authorlist.paragraph <- officer::fpar(values = authorlist)
 
     affiliations <- list()
-    n_affi <- n_distinct(df_Affiliation_order$Affiliation)
+    n_affi <- dplyr::n_distinct(df_Affiliation_order$Affiliation)
     for(i in 1:n_affi){
-      v1 <- ftext(df_Affiliation_order$Affiliation_Order[[i]], properties2)
-      v2 <- ftext(df_Affiliation_order$Affiliation[[i]], properties1)
-      affiliations[[i]] <- fpar(v1, v2)
+      v1 <- officer::ftext(df_Affiliation_order$Affiliation_Order[[i]], properties2)
+      v2 <- officer::ftext(df_Affiliation_order$Affiliation[[i]], properties1)
+      affiliations[[i]] <- officer::fpar(v1, v2)
     }
 
-    x <- read_docx()
-    x <- body_add(x, authorlist.paragraph)
-    x <- body_add(x, fpar(""))
+    x <- officer::read_docx()
+    x <- officer::body_add(x, authorlist.paragraph)
+    x <- officer::body_add(x, officer::fpar(""))
     for(i in 1:n_affi){
-      x <- body_add(x, affiliations[[i]])
+      x <- officer::body_add(x, affiliations[[i]])
     }
     print(x, target = target)
   }else{
-    df_Affiliation_order %<>%
-      mutate(Affiliation_Order_2 = map_chr(Affiliation_Order, function(i){
+    df_Affiliation_order <- df_Affiliation_order %>%
+      dplyr::mutate(Affiliation_Order_2 = purrr::map_chr(Affiliation_Order, function(i){
         letter_ <- letters[i%%26]
         n_letter_rep <- i%/%26+1
         output <- rep(letter_, n_letter_rep) %>% paste0(collapse = "")
         return(output)
       }))
 
-    df_authorlist <- df_authorlist %>% left_join(df_Affiliation_order)
+    df_authorlist <- df_authorlist %>% dplyr::left_join(df_Affiliation_order)
 
     df_authorlist <- df_authorlist %>%
-      arrange(Coauthor_Order, Affiliation_Order) %>%
-      group_by(Coauthor_Name, Coauthor_Order) %>%
-      nest() %>%
-      mutate(data = map(data,
-                        function(dat) dat %>% pull(Affiliation_Order_2))) %>%
-      mutate(
-        Affiliation_numbers = map_chr(data,
+      dplyr::arrange(Coauthor_Order, Affiliation_Order) %>%
+      dplyr::group_by(Coauthor_Name, Coauthor_Order) %>%
+      tidyr::nest() %>%
+      dplyr::mutate(data = purrr::map(data,
+                        function(dat) dat %>% dplyr::pull(Affiliation_Order_2))) %>%
+      dplyr::mutate(
+        Affiliation_numbers = purrr::map_chr(data,
                                       function(dat) paste0(dat, collapse = ","))) %>%
       select(-data)
 
-    df_Affiliation_order <- df_Affiliation_order %>% arrange(Affiliation_Order)
-    df_authorlist <- df_authorlist %>% arrange(Coauthor_Order)
+    df_Affiliation_order <- df_Affiliation_order %>% dplyr::arrange(Affiliation_Order)
+    df_authorlist <- df_authorlist %>% dplyr::arrange(Coauthor_Order)
 
-    properties1 <- fp_text(font.size=11, font.family = "Calibri")
-    properties2 <- fp_text(font.size=11, font.family = "Calibri", vertical.align = "superscript")
+    properties1 <- officer::fp_text(font.size=11, font.family = "Calibri")
+    properties2 <- officer::fp_text(font.size=11, font.family = "Calibri", vertical.align = "superscript")
 
     authorlist <- list()
-    n_author <- n_distinct(df_authorlist$Coauthor_Name)
+    n_author <- dplyr::n_distinct(df_authorlist$Coauthor_Name)
     for(i in 1:n_author){
-      authorlist[[i*3-2]] <- ftext(df_authorlist$Coauthor_Name[[i]], properties1)
-      authorlist[[i*3-1]] <- ftext(df_authorlist$Affiliation_numbers[[i]], properties2)
-      authorlist[[i*3]] <- ftext(", ", properties1)
+      authorlist[[i*3-2]] <- officer::ftext(df_authorlist$Coauthor_Name[[i]], properties1)
+      authorlist[[i*3-1]] <- officer::ftext(df_authorlist$Affiliation_numbers[[i]], properties2)
+      authorlist[[i*3]] <- officer::ftext(", ", properties1)
     }
     authorlist[[n_author*3]] <- ""
-    authorlist.paragraph <- fpar(values = authorlist)
+    authorlist.paragraph <- officer::fpar(values = authorlist)
 
     affiliations <- list()
-    n_affi <- n_distinct(df_Affiliation_order$Affiliation)
+    n_affi <- dplyr::n_distinct(df_Affiliation_order$Affiliation)
     for(i in 1:n_affi){
-      v1 <- ftext(df_Affiliation_order$Affiliation_Order_2[[i]], properties2)
-      v2 <- ftext(df_Affiliation_order$Affiliation[[i]], properties1)
-      affiliations[[i]] <- fpar(v1, v2)
+      v1 <- officer::ftext(df_Affiliation_order$Affiliation_Order_2[[i]], properties2)
+      v2 <- officer::ftext(df_Affiliation_order$Affiliation[[i]], properties1)
+      affiliations[[i]] <- officer::fpar(v1, v2)
     }
 
-    x <- read_docx()
-    x <- body_add(x, authorlist.paragraph)
-    x <- body_add(x, fpar(""))
+    x <- officer::read_docx()
+    x <- officer::body_add(x, authorlist.paragraph)
+    x <- officer::body_add(x, officer::fpar(""))
     for(i in 1:n_affi){
-      x <- body_add(x, affiliations[[i]])
+      x <- officer::body_add(x, affiliations[[i]])
     }
     print(x, target = target)
   }
