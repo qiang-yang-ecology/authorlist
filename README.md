@@ -55,4 +55,5 @@ toAuthorlist(source.csv = "~/Downloads/authorlist.csv",
              # where you save the produced word document
              type="numbered"
              # type of numbering the affiliations, could be numbered (numbers) or alphabeta (letters)
+)
 ```
