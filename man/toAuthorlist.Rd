@@ -27,6 +27,7 @@ main function to produce the formatted author list and affiliation list in Word
 This is the main function to produce the formatted author list and affiliation list in Word.
 }
 \examples{
+library(authorlist)
 toAuthorlist(source.csv = "~/Downloads/authorlist.csv",
            target = "~/Downloads/authorlist.docx",
            type="numbered")

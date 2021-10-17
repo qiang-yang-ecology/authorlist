@@ -40,7 +40,7 @@ https://figshare.com/articles/dataset/CSV_template_for_R_package_authorlist_/167
 
 - step3: produced the formatted author and affiliation list 
 ```{r example, eval=FALSE}
-library(toAuthorlist)
+library(authorlist)
 toAuthorlist(source.csv = "~/Downloads/authorlist.csv",
              # the csv including the author names and affiliations
              target = "~/Downloads/authorlist.docx",

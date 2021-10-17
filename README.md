@@ -38,17 +38,19 @@ devtools::install_github("qiang-yang-ecology/authorlist")
 This is a basic example which shows you how to produce the Word document
 with formatted author and affiliation list:
 
--   step 1: download the template from the following link to your
+  - step 1: download the template from the following link to your
     computer:
     <https://figshare.com/articles/dataset/CSV_template_for_R_package_authorlist_/16794901>
 
--   step2: modify the csv file to include the coauthor information of
+  - step2: modify the csv file to include the coauthor information of
     your manuscript.
 
--   step3: produced the formatted author and affiliation list
+  - step3: produced the formatted author and affiliation list
+
+<!-- end list -->
 
 ``` r
-library(toAuthorlist)
+library(authorlist)
 toAuthorlist(source.csv = "~/Downloads/authorlist.csv",
              # the csv including the author names and affiliations
              target = "~/Downloads/authorlist.docx",
